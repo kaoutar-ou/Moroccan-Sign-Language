@@ -62,8 +62,8 @@ def image_processed(file_path):
 
 def make_csv():
 
-    mypath = 'msl_test_12'
-    file_name = open('model/msl_2.csv', 'a')
+    mypath = 'aug_letters_1'
+    file_name = open('model/msl_4.csv', 'a')
 
     for each_folder in os.listdir(mypath):
         if '._' in each_folder:

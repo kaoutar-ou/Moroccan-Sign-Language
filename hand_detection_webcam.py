@@ -9,6 +9,8 @@ import arabic_reshaper
 from bidi.algorithm import get_display
 from PIL import ImageFont, ImageDraw, Image
 
+add_letter = False
+sentence = ''
 reshaped_text = arabic_reshaper.reshape(" ")
 
 mp_drawing = mp.solutions.drawing_utils
@@ -109,21 +111,50 @@ while cap.isOpened():
         # LABELS = {'A':'أ','AIN':'ع','B':'ب','D':'د','DAD':'ض','GH':'غ','L':'ل','R':'ر','S':'س','T':'ت','Y':'ي'}
 
         if cleaned_landmark:
-            clf = joblib.load('model/msl_model_2.pkl')
+            clf = joblib.load('model/msl_model_4.pkl')
             y_pred = clf.predict(cleaned_landmark)
+
+            # y_pred *= 100
+            
 
             # if y_pred[0] in LABELS.values() :
 
             res = LABELS[y_pred[0]]
 
+            c = cv2.waitKey(1) & 0xff
+
+            if c == ord('n') or c == ord('N'):
+                sentence += res
+
+            if c == ord('c') or c == ord('C'):
+                sentence = ''
+            
+            if res == 'أ':
+                add_letter = True
+            # else:
+                # add_letter = False
+            # print("fgyhjkfdghjk"+res)
+
+            if add_letter :
+                if res != 'أ' :
+                    sentence += res
+                    add_letter = False
+
+            reshaped_text_sentence = arabic_reshaper.reshape(sentence)
+
             reshaped_text = arabic_reshaper.reshape(res)
 
             bidi_text = get_display(reshaped_text)
+            bidi_text_sentence = get_display(reshaped_text_sentence)
+
             fontpath = "arial.ttf"
             font = ImageFont.truetype(fontpath, 52)
             img_pil = Image.fromarray(image)
             draw = ImageDraw.Draw(img_pil)
+
             draw.text((x_min, y_min), bidi_text, font=font)
+            draw.text((10,30), bidi_text_sentence, font=font)
+
             image = np.array(img_pil)
 
             # image = cv2.putText(image, str(res), (x_min, y_min), cv2.FONT_HERSHEY_SIMPLEX,  3, (0, 0, 255), 2, cv2.LINE_AA)
