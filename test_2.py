@@ -1,10 +1,7 @@
-from hashlib import new
 import cv2
 import mediapipe as mp
 import joblib
 import numpy as np
-from pyrsistent import v
-from sqlalchemy import null
 
 
 from variables import *
@@ -17,60 +14,30 @@ from playsound import playsound
 import io
 import pyttsx3
 
-import threading
-import time
-
 engine = pyttsx3.init()
 engine.setProperty('rate', 105)
 engine.setProperty('voice', 1)
 
 import os
 
-import wave
-
-
-
-from pydub import AudioSegment
-
-from moviepy.editor import concatenate_audioclips, AudioFileClip
-
-
-
-res=''
-res1=''
-mp3_file = 0
-output_mp3_file = 0
-rep_letters = 'C:\\Users\\kaout\\irisi4\\MA\\mp\\220522_2\\MSL\\history\\letters\\voice'
-rep_words = 'C:\\Users\\kaout\\irisi4\\MA\\mp\\220522_2\\MSL\\history\\words\\voice'
-
-def speak(text,path,mp3) :
-    # rep = 'C:\\Users\\kaout\\irisi4\\MA\\mp\\220522_2\\MSL\\history\\voice'
+def speak(text) :
     mp3_ = io.BytesIO()
     tts = gtts.gTTS(text=text, lang='ar')
     # tts.write_to_fp(mp3_)
-    name = path+str(mp3)+'.mp3'
-    tts.save(name)
-    playsound(name)
-    # os.remove(name)
-
+    tts.save('C:\\Users\\kaout\\irisi4\\MA\\mp\\220522_2\\MSL\\voice.mp3')
+    playsound(r'C:\\Users\kaout\irisi4\MA\mp\220522_2\MSL\voice.mp3')
+    os.remove('C:\\Users\\kaout\\irisi4\\MA\\mp\\220522_2\\MSL\\voice.mp3')
 
     # tts.save("C:/Users/kaout/irisi4/MA/mp/220522_2/MSL/voice.mp3")
     # playsound("C:/Users/kaout/irisi4/MA/mp/220522_2/MSL/voice.mp3")
 
-
-def concatenate_audio_moviepy(audio_clip_paths, output_path):
-    # clips = [AudioFileClip(c) for c in './history']
-
-    print(clips)
-    final_clip = concatenate_audioclips(clips)
-    final_clip.write_audiofile(output_path)
 
 
 add_letter = False
 sentence = ''
 reshaped_text = arabic_reshaper.reshape(" ")
 
-
+res=''
 
 mp_drawing = mp.solutions.drawing_utils
 mp_hands = mp.solutions.hands
@@ -116,7 +83,6 @@ def data_clean(landmark):
 
 mphands = mp.solutions.hands
 while cap.isOpened():
-   
     success, image = cap.read()
 
     h, w, c = image.shape
@@ -190,18 +156,13 @@ while cap.isOpened():
 
             # if y_pred[0] in LABELS.values() :
 
-            # res1 = LABELS[y_pred[0]]
-            res = LABELS[y_pred[0]]
+            res1 = LABELS[y_pred[0]]
 
-            if res != res1 :
-                # time.sleep(2).
-                # print(y_pred)
-                res1 = res
-                # print(res1)
-                mp3_file+=1
-                th = threading.Thread(target=speak, args=(res, rep_letters, mp3_file))
-                # print(mp3_file)
-                th.start()
+            if res1 != res :
+                print(y_pred)
+                res = res1
+                print(res)
+                # speak(res)
 
             c = cv2.waitKey(1) & 0xff
 
@@ -211,62 +172,11 @@ while cap.isOpened():
             if c == ord('c') or c == ord('C'):
                 sentence = ''
             
-            if c == ord('r') or c == ord('R'):
-                # print('rrr')
-                if sentence != '' :
-                    print(sentence)
-                    mp3_file+=1
-                    th = threading.Thread(target=speak, args=(sentence, rep_words, mp3_file))
-                    th.start()
-            
-            combined_letters = []
-            combined_words = []
-
-            last_letter = ''
-            last_word = ''
-
-            index_letter = 0
-            index_word = 0
-
-            if c == ord('s') or c == ord('S'):
-                for file in os.listdir('history/letters') :
-                    sound = AudioFileClip("./history/letters/"+file)
-                    combined_letters.append(sound)
-                
-                for file in os.listdir('output_mp3/letters') :
-                    last_letter = file
-
-                if last_letter != '' :
-                    i_letter = last_letter.split('_')[1].split('.')[0]
-                    index_letter = int(i_letter) + 1
-
-                final_clip_letters = concatenate_audioclips(combined_letters)
-                final_clip_letters.write_audiofile('./output_mp3/letters/voice_'+str(index_letter)+'.mp3')
-
-                for file in os.listdir('history/words') :
-                    sound = AudioFileClip("./history/words/"+file)
-                    combined_words.append(sound)
-
-                for file in os.listdir('output_mp3/words') :
-                    last_word = file
-                
-                if last_word != '' :
-                    i_word = last_word.split('_')[1].split('.')[0]
-                    index_word = int(i_word) + 1
-
-                final_clip_words = concatenate_audioclips(combined_words)
-                final_clip_words.write_audiofile('./output_mp3/words/voice_'+str(index_word)+'.mp3')
-
-                # output_mp3_file += 1
-
-            if c == ord('i') or c == ord('I'):
-                for file in os.listdir('history/letters') :
-                    os.remove('history/letters/'+file)
-                for file in os.listdir('history/words') :
-                    os.remove('history/words/'+file)
-
             if res == 'أ':
                 add_letter = True
+            # else:
+                # add_letter = False
+            # print("fgyhjkfdghjk"+res)
 
             if add_letter :
                 if res != 'أ' :
@@ -280,6 +190,8 @@ while cap.isOpened():
             bidi_text = get_display(reshaped_text)
             bidi_text_sentence = get_display(reshaped_text_sentence)
 
+            # speak(res)
+
             fontpath = "arial.ttf"
             font = ImageFont.truetype(fontpath, 52)
             img_pil = Image.fromarray(image)
@@ -290,13 +202,11 @@ while cap.isOpened():
 
             image = np.array(img_pil)
 
+            # image = cv2.putText(image, str(res), (x_min, y_min), cv2.FONT_HERSHEY_SIMPLEX,  3, (0, 0, 255), 2, cv2.LINE_AA)
+
     cv2.imshow('MediaPipe Hands', image)
 
     if cv2.waitKey(5) & 0xFF == 27:
-        for file in os.listdir('history/letters') :
-            os.remove('history/letters/'+file)
-        for file in os.listdir('history/words') :
-            os.remove('history/words/'+file)
         break
 
 hands.close()
