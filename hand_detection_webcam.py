@@ -6,7 +6,7 @@ import numpy as np
 from pyrsistent import v
 from sqlalchemy import null
 
-
+import emoji
 from variables import *
 import arabic_reshaper
 from bidi.algorithm import get_display
@@ -284,9 +284,23 @@ while cap.isOpened():
             font = ImageFont.truetype(fontpath, 52)
             img_pil = Image.fromarray(image)
             draw = ImageDraw.Draw(img_pil)
-
-            draw.text((x_min, y_min), bidi_text, font=font)
-            draw.text((10,30), bidi_text_sentence, font=font)
+            if(bidi_text==';('):
+                logo = cv2.imread("/home/akihiki/PycharmProjects/Moroccan-Sign-Language/emojis/smilling-face.png")
+                logo_pil = Image.fromarray(logo)
+                img_pil.paste(logo_pil, (10, 30))
+                # logo = cv2.imread("/home/akihiki/PycharmProjects/Moroccan-Sign-Language/aug_letters_1/SADMOJI/SADMOJI_0_9883.jpeg")
+                # h_logo, w_logo, _ = logo.shape
+                # cv2.addWeighted(img_pil, 1, logo, 0.5, 0)
+                # font = ImageFont.truetype("Arial Unicode.ttf", 32)
+                # fontpath = "Arial Unicode.ttf"
+                # font = ImageFont.truetype(fontpath, 32)
+                # # draw.text((50, 100), "国庆节/中秋节 快乐!", font=font)
+                # # tick = str(emoji.emojize(':thumbs_up:'))
+                # # print(emoji.emojize('Python is :thumbs_up:'))
+                # draw.text((40, 80), emoji.emojize('Python is :thumbs_up:'), font=font)
+            else:
+                draw.text((x_min, y_min), bidi_text, font=font)
+                draw.text((10,30), bidi_text_sentence, font=font)
 
             image = np.array(img_pil)
 
