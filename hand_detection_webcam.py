@@ -40,8 +40,8 @@ res=''
 res1=''
 mp3_file = 0
 output_mp3_file = 0
-rep_letters = 'C:\\Users\\kaout\\irisi4\\MA\\mp\\220522_2\\MSL\\history\\letters\\voice'
-rep_words = 'C:\\Users\\kaout\\irisi4\\MA\\mp\\220522_2\\MSL\\history\\words\\voice'
+rep_letters = 'C:\\Users\\ismail\\Desktop\\Agile\\morr\\Moroccan-Sign-Language\\history\\letters\\voice'
+rep_words = 'C:\\Users\\ismail\\Desktop\\Agile\\morr\\Moroccan-Sign-Language\\history\\words\\voice'
 
 def speak(text,path,mp3) :
     # rep = 'C:\\Users\\kaout\\irisi4\\MA\\mp\\220522_2\\MSL\\history\\voice'
@@ -205,7 +205,7 @@ while cap.isOpened():
                     th = threading.Thread(target=speak, args=(res, rep_letters, mp3_file))
                 # print(mp3_file)
                 th.start()
-
+                
             c = cv2.waitKey(1) & 0xff
 
             if c == ord('n') or c == ord('N'):
@@ -288,7 +288,7 @@ while cap.isOpened():
             img_pil = Image.fromarray(image)
             draw = ImageDraw.Draw(img_pil)
             if(bidi_text==';('):
-                logo = cv2.imread("/home/akihiki/PycharmProjects/Moroccan-Sign-Language/emojis/smilling-face.png")
+                logo = cv2.imread("emojis\smilling-face.png")
                 logo_pil = Image.fromarray(logo)
                 img_pil.paste(logo_pil, (10, 30))
             else:
