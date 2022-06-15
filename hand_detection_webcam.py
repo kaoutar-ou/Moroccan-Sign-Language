@@ -201,6 +201,10 @@ while cap.isOpened():
                 mp3_file+=1
                 if (res1== ';('):
                     th = threading.Thread(target=speak, args=('انا حزين', rep_letters, mp3_file))
+                elif(res1==':('):
+                    th = threading.Thread(target=speak, args=('انا غاضب', rep_letters, mp3_file))
+                elif(res1==':)'):
+                    th = threading.Thread(target=speak, args=('انا سعيد', rep_letters, mp3_file))
                 else:
                     th = threading.Thread(target=speak, args=(res, rep_letters, mp3_file))
                 # print(mp3_file)
@@ -288,9 +292,24 @@ while cap.isOpened():
             img_pil = Image.fromarray(image)
             draw = ImageDraw.Draw(img_pil)
             if(bidi_text==';('):
-                logo = cv2.imread("emojis\smilling-face.png")
+                logo = cv2.imread("/home/akihiki/PycharmProjects/Moroccan-Sign-Language/emojis/cry-face.png")
                 logo_pil = Image.fromarray(logo)
-                img_pil.paste(logo_pil, (10, 30))
+                img_pil.paste(logo_pil, (x_max, y_min))
+
+                draw.text((x_min, y_min), 'انا حزين', font=font)
+            elif(bidi_text==':('):
+                logo = cv2.imread("/home/akihiki/PycharmProjects/Moroccan-Sign-Language/emojis/angry-face.png")
+                logo_pil = Image.fromarray(logo)
+                img_pil.paste(logo_pil, (x_max, y_min))
+
+                draw.text((x_min, y_min), 'انا غاضب', font=font)
+
+            elif(bidi_text==':)'):
+                logo = cv2.imread("/home/akihiki/PycharmProjects/Moroccan-Sign-Language/emojis/smilling-face.png")
+                logo_pil = Image.fromarray(logo)
+                img_pil.paste(logo_pil, (x_max, y_min))
+
+                draw.text((x_min, y_min), 'انا سعيد', font=font)
             else:
                 draw.text((x_min, y_min), bidi_text, font=font)
                 draw.text((10,30), bidi_text_sentence, font=font)
