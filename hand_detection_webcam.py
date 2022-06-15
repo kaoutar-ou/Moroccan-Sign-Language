@@ -197,9 +197,12 @@ while cap.isOpened():
                 # time.sleep(2).
                 # print(y_pred)
                 res1 = res
-                # print(res1)
+
                 mp3_file+=1
-                th = threading.Thread(target=speak, args=(res, rep_letters, mp3_file))
+                if (res1== ';('):
+                    th = threading.Thread(target=speak, args=('انا حزين', rep_letters, mp3_file))
+                else:
+                    th = threading.Thread(target=speak, args=(res, rep_letters, mp3_file))
                 # print(mp3_file)
                 th.start()
 
@@ -288,16 +291,6 @@ while cap.isOpened():
                 logo = cv2.imread("/home/akihiki/PycharmProjects/Moroccan-Sign-Language/emojis/smilling-face.png")
                 logo_pil = Image.fromarray(logo)
                 img_pil.paste(logo_pil, (10, 30))
-                # logo = cv2.imread("/home/akihiki/PycharmProjects/Moroccan-Sign-Language/aug_letters_1/SADMOJI/SADMOJI_0_9883.jpeg")
-                # h_logo, w_logo, _ = logo.shape
-                # cv2.addWeighted(img_pil, 1, logo, 0.5, 0)
-                # font = ImageFont.truetype("Arial Unicode.ttf", 32)
-                # fontpath = "Arial Unicode.ttf"
-                # font = ImageFont.truetype(fontpath, 32)
-                # # draw.text((50, 100), "国庆节/中秋节 快乐!", font=font)
-                # # tick = str(emoji.emojize(':thumbs_up:'))
-                # # print(emoji.emojize('Python is :thumbs_up:'))
-                # draw.text((40, 80), emoji.emojize('Python is :thumbs_up:'), font=font)
             else:
                 draw.text((x_min, y_min), bidi_text, font=font)
                 draw.text((10,30), bidi_text_sentence, font=font)
