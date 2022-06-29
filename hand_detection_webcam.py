@@ -25,8 +25,16 @@ engine.setProperty('rate', 105)
 engine.setProperty('voice', 1)
 
 import os
-
+import pyvirtualcam
+fmt = pyvirtualcam.PixelFormat.BGR
+camera = pyvirtualcam.Camera(width=640, height=480, fps=2, fmt=fmt, device='/dev/video4')
 import wave
+
+
+
+import cvlib as cv
+
+
 
 
 
@@ -81,6 +89,13 @@ hands = mp_hands.Hands(
 
 cap = cv2.VideoCapture(0)
 
+def exprimerSentiment(sentiment):
+    if (sentiment == 'Happy') :
+        playsound('sentimentsaudios/happy.mp3')
+    elif (sentiment == 'Sad') :
+        playsound('sentimentsaudios/sad.mp3')
+    elif (sentiment == 'Angry') :
+        playsound('sentimentsaudios/angry.mp3')
 
 def data_clean(landmark):
 
@@ -142,7 +157,10 @@ while cap.isOpened():
     image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
 
     if results.multi_hand_landmarks:
-    # if results.multi_hand_landmarks is not None:
+
+
+
+        # if results.multi_hand_landmarks is not None:
         # for hand_landmarks, handedness in zip(results.multi_hand_landmarks,
         #                                         results.multi_handedness):
             # print(results.multi_handeness)
@@ -179,7 +197,7 @@ while cap.isOpened():
             y_pred = clf.predict(cleaned_landmark)
 
             # print(y_pred)
-            
+
             # ppp = y_pred * 100
 
             # print(y_pred)
@@ -200,16 +218,19 @@ while cap.isOpened():
 
                 mp3_file+=1
                 if (res1== ';('):
-                    th = threading.Thread(target=speak, args=('انا حزين', rep_letters, mp3_file))
+                    # th = threading.Thread(target=speak, args=('انا حزين', rep_letters, mp3_file))
+                    th = threading.Thread(target=exprimerSentiment, args=('Sad',))
                 elif(res1==':('):
-                    th = threading.Thread(target=speak, args=('انا غاضب', rep_letters, mp3_file))
+                    th = threading.Thread(target=exprimerSentiment, args=('Angry',))
+                    # th = threading.Thread(target=speak, args=('انا غاضب', rep_letters, mp3_file))
                 elif(res1==':)'):
-                    th = threading.Thread(target=speak, args=('انا سعيد', rep_letters, mp3_file))
+                    th = threading.Thread(target=exprimerSentiment, args=('Happy',))
+                    # th = threading.Thread(target=speak, args=('انا سعيد', rep_letters, mp3_file))
                 else:
                     th = threading.Thread(target=speak, args=(res, rep_letters, mp3_file))
                 # print(mp3_file)
                 th.start()
-                
+
             c = cv2.waitKey(1) & 0xff
 
             if c == ord('n') or c == ord('N'):
@@ -217,7 +238,7 @@ while cap.isOpened():
 
             if c == ord('c') or c == ord('C'):
                 sentence = ''
-            
+
             if c == ord('r') or c == ord('R'):
                 # print('rrr')
                 if sentence != '' :
@@ -225,7 +246,7 @@ while cap.isOpened():
                     mp3_file+=1
                     th = threading.Thread(target=speak, args=(sentence, rep_words, mp3_file))
                     th.start()
-            
+
             combined_letters = []
             combined_words = []
 
@@ -239,7 +260,7 @@ while cap.isOpened():
                 for file in os.listdir('history/letters') :
                     sound = AudioFileClip("./history/letters/"+file)
                     combined_letters.append(sound)
-                
+
                 for file in os.listdir('output_mp3/letters') :
                     last_letter = file
 
@@ -256,7 +277,7 @@ while cap.isOpened():
 
                 for file in os.listdir('output_mp3/words') :
                     last_word = file
-                
+
                 if last_word != '' :
                     i_word = last_word.split('_')[1].split('.')[0]
                     index_word = int(i_word) + 1
@@ -297,6 +318,7 @@ while cap.isOpened():
                 img_pil.paste(logo_pil, (x_max, y_min))
 
                 draw.text((x_min, y_min), 'انا حزين', font=font)
+
             elif(bidi_text==':('):
                 logo = cv2.imread("/home/akihiki/PycharmProjects/Moroccan-Sign-Language/emojis/angry-face.png")
                 logo_pil = Image.fromarray(logo)
@@ -316,7 +338,9 @@ while cap.isOpened():
 
             image = np.array(img_pil)
 
+
     cv2.imshow('MediaPipe Hands', image)
+    camera.send(image)
 
     if cv2.waitKey(5) & 0xFF == 27:
         for file in os.listdir('history/letters') :
